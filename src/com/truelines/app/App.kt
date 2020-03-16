@@ -163,7 +163,6 @@ class App : RComponent<AppProps, AppState>() {
                         Grid {
                             attrs.container = true
                             attrs.direction = "column"
-//                            attrs.alignItems = "center"
                             attrs.justify = "flex-start"
                             attrs.alignItems = "stretch"
                             attrs.spacing = 2
@@ -187,7 +186,6 @@ class App : RComponent<AppProps, AppState>() {
                                     attrs.direction = "row"
                                     attrs.justify = "center"
                                     attrs.spacing = 3
-
 
                                     Grid {
                                         attrs.item = true
@@ -213,6 +211,7 @@ class App : RComponent<AppProps, AppState>() {
                                             attrs.autoWidth = true
                                             attrs.disabled = state.started
                                             attrs.onChange = {
+                                                it.preventDefault()
                                                 setState {
                                                     tableNumber = it.target.asDynamic().value
                                                 }
@@ -221,12 +220,12 @@ class App : RComponent<AppProps, AppState>() {
                                             for (i in 1..10) {
                                                 MenuItem {
                                                     attrs.value = i
-                                                    +"$i"
+                                                    +"Table de $i"
                                                 }
                                             }
                                             MenuItem {
                                                 attrs.value = -1
-                                                +"Toute"
+                                                +"Toute les tables"
                                             }
                                         }
                                     }
@@ -300,10 +299,7 @@ class App : RComponent<AppProps, AppState>() {
                                     marginTop = "30px"
                                 }
 
-                                Grid {
-                                    attrs.item = true
-
-                                    Button {
+                                Button {
                                         attrs.color = "primary"
                                         attrs.variant = "outlined"
                                         attrs.onClick = {
@@ -339,7 +335,6 @@ class App : RComponent<AppProps, AppState>() {
                                         }
                                         +state.startButtonLabel
                                     }
-                                }
 
                             }
 

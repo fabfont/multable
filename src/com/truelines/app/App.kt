@@ -117,14 +117,14 @@ class App : RComponent<AppProps, AppState>() {
 
             Grid {
                 attrs.container = true
-                attrs.direction = "column"
-                attrs.alignItems = "center"
-                attrs.justify = "flex-start"
+                attrs.direction = "row"
+//                attrs.alignItems = "stretch"
+                attrs.justify = "center"
 //                attrs.alignItems = "stretch"
                 attrs.spacing = 2
                 attrs.style = kotlinext.js.js {
                     width = "100%"
-                    margin = "40px"
+                    margin = "40px auto auto auto"
                     height = "100%"
                     flexWrap = "nowrap"
                 }
@@ -154,152 +154,158 @@ class App : RComponent<AppProps, AppState>() {
 
                     }
 
-                    Card {
-                        attrs.style = js {
-                            width = "40%"
-                            padding = "20px"
-                        }
+                    Grid {
+                        attrs.item = true
+                        attrs.xs = 11
+                        attrs.md = 6
+                        attrs.lg = 4
 
-                        Grid {
-                            attrs.container = true
-                            attrs.direction = "column"
-                            attrs.justify = "flex-start"
-                            attrs.alignItems = "stretch"
-                            attrs.spacing = 2
-
-                            Grid {
-                                attrs.item = true
-
-                                attrs.style = js {
-                                    marginBottom = "40px"
-                                }
-
-                                logo(logoHeight = 70) {}
+                        Card {
+                            attrs.style = js {
+                                width = "100%"
+                                padding = "20px"
                             }
 
-
                             Grid {
-                                attrs.item = true
+                                attrs.container = true
+                                attrs.direction = "column"
+                                attrs.justify = "flex-start"
+                                attrs.alignItems = "stretch"
+                                attrs.spacing = 2
 
                                 Grid {
-                                    attrs.container = true
-                                    attrs.direction = "row"
-                                    attrs.justify = "center"
-                                    attrs.spacing = 3
+                                    attrs.item = true
 
-                                    Grid {
-                                        attrs.item = true
-                                        attrs.xs = 6
-
-                                        Typography {
-                                            attrs.variant = "h6"
-                                            attrs.component = "p"
-                                            attrs.align = "right"
-                                            +"Table : "
-                                        }
+                                    attrs.style = js {
+                                        marginBottom = "40px"
                                     }
 
+                                    logo(logoHeight = 70) {}
+                                }
+
+
+                                Grid {
+                                    attrs.item = true
+
                                     Grid {
-                                        attrs.item = true
-                                        attrs.xs = 6
-                                        attrs.style = js {
-                                            textAlign = "left"
+                                        attrs.container = true
+                                        attrs.direction = "row"
+                                        attrs.justify = "center"
+                                        attrs.spacing = 3
+
+                                        Grid {
+                                            attrs.item = true
+                                            attrs.xs = 6
+
+                                            Typography {
+                                                attrs.variant = "h6"
+                                                attrs.component = "p"
+                                                attrs.align = "right"
+                                                +"Table : "
+                                            }
                                         }
 
-                                        Select {
-                                            attrs.defaultValue = state.tableNumber
-                                            attrs.autoWidth = true
-                                            attrs.disabled = state.started
-                                            attrs.onChange = {
-                                                it.preventDefault()
-                                                setState {
-                                                    tableNumber = it.target.asDynamic().value
-                                                }
+                                        Grid {
+                                            attrs.item = true
+                                            attrs.xs = 6
+                                            attrs.style = js {
+                                                textAlign = "left"
                                             }
 
-                                            for (i in 1..10) {
+                                            Select {
+                                                attrs.defaultValue = state.tableNumber
+                                                attrs.autoWidth = true
+                                                attrs.disabled = state.started
+                                                attrs.onChange = {
+                                                    it.preventDefault()
+                                                    setState {
+                                                        tableNumber = it.target.asDynamic().value
+                                                    }
+                                                }
+
+                                                for (i in 1..10) {
+                                                    MenuItem {
+                                                        attrs.value = i
+                                                        +"Table de $i"
+                                                    }
+                                                }
                                                 MenuItem {
-                                                    attrs.value = i
-                                                    +"Table de $i"
+                                                    attrs.value = -1
+                                                    +"Toute les tables"
                                                 }
                                             }
-                                            MenuItem {
-                                                attrs.value = -1
-                                                +"Toute les tables"
-                                            }
                                         }
+
                                     }
-
                                 }
-                            }
-
-                            Grid {
-                                attrs.item = true
 
                                 Grid {
-                                    attrs.container = true
-                                    attrs.direction = "row"
-                                    attrs.justify = "center"
-                                    attrs.spacing = 3
-
+                                    attrs.item = true
 
                                     Grid {
-                                        attrs.item = true
-                                        attrs.xs = 6
+                                        attrs.container = true
+                                        attrs.direction = "row"
+                                        attrs.justify = "center"
+                                        attrs.spacing = 3
 
-                                        Typography {
-                                            attrs.variant = "h6"
-                                            attrs.component = "p"
-                                            attrs.align = "right"
-                                            +"Nombre de questions : "
+
+                                        Grid {
+                                            attrs.item = true
+                                            attrs.xs = 6
+
+                                            Typography {
+                                                attrs.variant = "h6"
+                                                attrs.component = "p"
+                                                attrs.align = "right"
+                                                +"Nombre de questions : "
+                                            }
                                         }
-                                    }
 
-                                    Grid {
-                                        attrs.item = true
-                                        attrs.xs = 6
-                                        attrs.style = js {
-                                            textAlign = "left"
-                                        }
+                                        Grid {
+                                            attrs.item = true
+                                            attrs.xs = 6
+                                            attrs.style = js {
+                                                textAlign = "left"
+                                            }
 
-                                        Select {
-                                            attrs.defaultValue = state.numberOfQuestions
-                                            attrs.autoWidth = true
-                                            attrs.disabled = state.started
-                                            attrs.onChange = {
-                                                setState {
-                                                    numberOfQuestions = it.target.asDynamic().value
+                                            Select {
+                                                attrs.defaultValue = state.numberOfQuestions
+                                                attrs.autoWidth = true
+                                                attrs.disabled = state.started
+                                                attrs.onChange = {
+                                                    setState {
+                                                        numberOfQuestions = it.target.asDynamic().value
+                                                    }
+                                                }
+
+                                                MenuItem {
+                                                    val value = 10
+                                                    attrs.value = value
+                                                    +"$value"
+                                                }
+                                                MenuItem {
+                                                    val value = 20
+                                                    attrs.value = value
+                                                    +"$value"
+                                                }
+                                                MenuItem {
+                                                    val value = 30
+                                                    attrs.value = value
+                                                    +"$value"
                                                 }
                                             }
-
-                                            MenuItem {
-                                                val value = 10
-                                                attrs.value = value
-                                                +"$value"
-                                            }
-                                            MenuItem {
-                                                val value = 20
-                                                attrs.value = value
-                                                +"$value"
-                                            }
-                                            MenuItem {
-                                                val value = 30
-                                                attrs.value = value
-                                                +"$value"
-                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            Grid {
-                                attrs.item = true
+                                Grid {
+                                    attrs.item = true
 
-                                attrs.style = js {
-                                    marginTop = "30px"
-                                }
+                                    attrs.style = js {
+                                        marginTop = "30px"
+                                    }
 
-                                Button {
+                                    Button {
                                         attrs.color = "primary"
                                         attrs.variant = "outlined"
                                         attrs.onClick = {
@@ -336,92 +342,93 @@ class App : RComponent<AppProps, AppState>() {
                                         +state.startButtonLabel
                                     }
 
-                            }
-
-                            Grid {
-                                attrs.item = true
-
-                                Typography {
-                                    attrs.variant = "h2"
-                                    attrs.component = "p"
-                                    attrs.style = js {
-                                        marginTop = "50px"
-                                    }
-                                    if (state.remainingQuestions > 0) {
-                                        if (state.started) {
-                                            +"${state.number1} x ${state.number2} = ?"
-                                        } else {
-                                            +"Prêt ?"
-                                        }
-                                    } else  {
-                                        +"Ton score : ${state.goodAnswer} / ${state.numberOfQuestions}"
-                                    }
                                 }
-                            }
 
-                            if (state.started && state.remainingQuestions > 0) {
                                 Grid {
                                     attrs.item = true
-                                    attrs.style = js {
-                                        marginTop = "40px"
-                                    }
 
+                                    Typography {
+                                        attrs.variant = "h2"
+                                        attrs.component = "p"
+                                        attrs.style = js {
+                                            marginTop = "50px"
+                                        }
+                                        if (state.remainingQuestions > 0) {
+                                            if (state.started) {
+                                                +"${state.number1} x ${state.number2} = ?"
+                                            } else {
+                                                +"Prêt ?"
+                                            }
+                                        } else {
+                                            +"Ton score : ${state.goodAnswer} / ${state.numberOfQuestions}"
+                                        }
+                                    }
+                                }
+
+                                if (state.started && state.remainingQuestions > 0) {
                                     Grid {
-                                        attrs.container = true
-                                        attrs.direction = "row"
-                                        attrs.justify = "center"
-                                        attrs.spacing = 3
+                                        attrs.item = true
+                                        attrs.style = js {
+                                            marginTop = "40px"
+                                        }
 
                                         Grid {
-                                            attrs.item = true
-                                            TextField {
-                                                attrs.required = true
-                                                attrs.autoFocus = true
-                                                attrs.id = "result-input"
-                                                attrs.label = "Réponse"
-                                                attrs.placeholder = "Réponse"
-                                                attrs.error = !state.errorText.isEmpty()
-                                                attrs.helperText = state.errorText
-                                                attrs.type = "number"
-                                                attrs.value = state.resultInput ?: ""
+                                            attrs.container = true
+                                            attrs.direction = "row"
+                                            attrs.justify = "center"
+                                            attrs.spacing = 3
 
-                                                attrs.style = js {
-                                                    width = "300px"
-                                                }
+                                            Grid {
+                                                attrs.item = true
+                                                TextField {
+                                                    attrs.required = true
+                                                    attrs.autoFocus = true
+                                                    attrs.id = "result-input"
+                                                    attrs.label = "Réponse"
+                                                    attrs.placeholder = "Réponse"
+                                                    attrs.error = !state.errorText.isEmpty()
+                                                    attrs.helperText = state.errorText
+                                                    attrs.type = "number"
+                                                    attrs.value = state.resultInput ?: ""
 
-                                                attrs.InputProps = kotlinext.js.js {
-                                                    onKeyDown = fun(e: Event) {
-                                                        when (e.asDynamic().key) {
-                                                            "Enter" -> {
-                                                                console.info("Enter key down")
-                                                                e.preventDefault()
-                                                                checkResult(e)
+                                                    attrs.style = js {
+                                                        width = "300px"
+                                                    }
+
+                                                    attrs.InputProps = kotlinext.js.js {
+                                                        onKeyDown = fun(e: Event) {
+                                                            when (e.asDynamic().key) {
+                                                                "Enter" -> {
+                                                                    console.info("Enter key down")
+                                                                    e.preventDefault()
+                                                                    checkResult(e)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    attrs.onChange = {
+                                                        val valueInput =
+                                                                (document.getElementById("result-input")
+                                                                        as HTMLInputElement).value
+
+                                                        setState {
+                                                            resultInput = if (valueInput.isEmpty()) {
+                                                                null
+                                                            } else {
+                                                                valueInput.toInt()
                                                             }
                                                         }
                                                     }
                                                 }
-                                                attrs.onChange = {
-                                                    val valueInput =
-                                                            (document.getElementById("result-input")
-                                                                    as HTMLInputElement).value
-
-                                                    setState {
-                                                        resultInput = if (valueInput.isEmpty()) {
-                                                            null
-                                                        } else {
-                                                            valueInput.toInt()
-                                                        }
-                                                    }
-                                                }
                                             }
-                                        }
-                                        Grid {
-                                            attrs.item = true
-                                            Button {
-                                                attrs.color = "primary"
-                                                attrs.variant = "outlined"
-                                                attrs.onClick = checkResult
-                                                +"Vérifier"
+                                            Grid {
+                                                attrs.item = true
+                                                Button {
+                                                    attrs.color = "primary"
+                                                    attrs.variant = "outlined"
+                                                    attrs.onClick = checkResult
+                                                    +"Vérifier"
+                                                }
                                             }
                                         }
                                     }

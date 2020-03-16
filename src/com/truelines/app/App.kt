@@ -22,7 +22,6 @@ import react.RBuilder
 import react.RComponent
 import react.RState
 import react.ReactElement
-import react.router.dom.route
 import react.router.dom.switch
 import react.setState
 import kotlin.browser.document
@@ -121,9 +120,9 @@ class App : RComponent<AppProps, AppState>() {
                     flexWrap = "nowrap"
                 }
 
-                switch {
+//                switch {
 
-                    route(path = ROOT_PATH, exact = true) {
+//                    route(path = ROOT_PATH, exact = true) {
 
 
                         val checkResult = fun(e: Event) {
@@ -401,8 +400,8 @@ class App : RComponent<AppProps, AppState>() {
                             }
                         }
                     }
-                }
-            }
+//                }
+//            }
         }
 
 

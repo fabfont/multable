@@ -5,6 +5,7 @@ import kotlinx.html.js.onClickFunction
 import kotlinx.html.style
 import org.w3c.dom.events.Event
 import react.RBuilder
+import react.dom.a
 import react.dom.div
 import react.dom.img
 
@@ -17,9 +18,11 @@ fun RBuilder.logo(logoHeight: Int = 100, clickAction: (Event) -> Unit) {
             cursor = "pointer"
         }
         attrs.onClickFunction = clickAction
-        img(alt = "TrueLines", src = airstreamLogo, classes = "Logo") {
-            attrs.style = js {
-                height = "${logoHeight}px"
+        a ("https://fabfont.github.io/truelines.github.io") {
+            img(alt = "TrueLines", src = airstreamLogo, classes = "Logo") {
+                attrs.style = js {
+                    height = "${logoHeight}px"
+                }
             }
         }
     }

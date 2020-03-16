@@ -10,6 +10,7 @@ import com.truelines.material.MenuItem
 import com.truelines.material.Select
 import com.truelines.material.TextField
 import com.truelines.material.Typography
+import com.truelines.utils.Router
 import kotlinext.js.js
 import material.Colors
 import material.ThemeOptions
@@ -69,12 +70,18 @@ class App : RComponent<AppProps, AppState>() {
 
     fun renew() {
         setState {
-            number1 = Random.nextInt(1, state.numberMax)
-            number2 = if (tableNumber == -1) {
-                Random.nextInt(1, state.numberMax)
-            } else {
-                tableNumber
-            }
+            var newNumber1: Int? = null
+            var newNumber2: Int? = null
+            do {
+                newNumber1 = Random.nextInt(1, numberMax)
+                newNumber2 = if (tableNumber == -1) {
+                    Random.nextInt(1, numberMax)
+                } else {
+                    tableNumber
+                }
+            } while (newNumber1 == number1 && newNumber2 == number2)
+            number1 = newNumber1
+            number2 = newNumber2
             result = number1!! * number2!!
             errorText = ""
             resultInput = null
@@ -107,11 +114,13 @@ class App : RComponent<AppProps, AppState>() {
         themeOptions.palette?.secondary.main = Colors.Red.accent200.toString()
 
         mThemeProvider (theme = createMuiTheme(themeOptions)) {
+
             Grid {
                 attrs.container = true
                 attrs.direction = "column"
                 attrs.alignItems = "center"
                 attrs.justify = "flex-start"
+//                attrs.alignItems = "stretch"
                 attrs.spacing = 2
                 attrs.style = kotlinext.js.js {
                     width = "100%"
@@ -125,32 +134,39 @@ class App : RComponent<AppProps, AppState>() {
 //                    route(path = ROOT_PATH, exact = true) {
 
 
-                        val checkResult = fun(e: Event) {
-                            e.stopPropagation()
+                    val checkResult = fun(e: Event) {
+                        e.stopPropagation()
 
-                            if (state.result == state.resultInput) {
-                                setState {
-                                    remainingQuestions--
-                                    if (!gaveBadAnswer) goodAnswer++
-                                    gaveBadAnswer = false
-                                }
-                                renew()
-                            } else {
-                                setState {
-                                    errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
-                                    resultInput = null
-                                    gaveBadAnswer = true
-                                }
+                        if (state.result == state.resultInput) {
+                            setState {
+                                remainingQuestions--
+                                if (!gaveBadAnswer) goodAnswer++
+                                gaveBadAnswer = false
                             }
-
+                            renew()
+                        } else {
+                            setState {
+                                errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
+                                resultInput = null
+                                gaveBadAnswer = true
+                            }
                         }
 
-                        Card {
-                            attrs.style = js {
-                                width = "40%"
-                                padding = "20px"
-                            }
+                    }
 
+                    Card {
+                        attrs.style = js {
+                            width = "40%"
+                            padding = "20px"
+                        }
+
+                        Grid {
+                            attrs.container = true
+                            attrs.direction = "column"
+//                            attrs.alignItems = "center"
+                            attrs.justify = "flex-start"
+                            attrs.alignItems = "stretch"
+                            attrs.spacing = 2
 
                             Grid {
                                 attrs.item = true
@@ -175,16 +191,22 @@ class App : RComponent<AppProps, AppState>() {
 
                                     Grid {
                                         attrs.item = true
+                                        attrs.xs = 6
 
                                         Typography {
                                             attrs.variant = "h6"
                                             attrs.component = "p"
-                                            +"Table: "
+                                            attrs.align = "right"
+                                            +"Table : "
                                         }
                                     }
 
                                     Grid {
                                         attrs.item = true
+                                        attrs.xs = 6
+                                        attrs.style = js {
+                                            textAlign = "left"
+                                        }
 
                                         Select {
                                             attrs.defaultValue = state.tableNumber
@@ -224,16 +246,22 @@ class App : RComponent<AppProps, AppState>() {
 
                                     Grid {
                                         attrs.item = true
+                                        attrs.xs = 6
 
                                         Typography {
                                             attrs.variant = "h6"
                                             attrs.component = "p"
-                                            +"Nombre de questions: "
+                                            attrs.align = "right"
+                                            +"Nombre de questions : "
                                         }
                                     }
 
                                     Grid {
                                         attrs.item = true
+                                        attrs.xs = 6
+                                        attrs.style = js {
+                                            textAlign = "left"
+                                        }
 
                                         Select {
                                             attrs.defaultValue = state.numberOfQuestions
@@ -281,12 +309,18 @@ class App : RComponent<AppProps, AppState>() {
                                         attrs.onClick = {
                                             if (!state.started) {
                                                 setState {
-                                                    number1 = Random.nextInt(1, state.numberMax)
-                                                    number2 = if (tableNumber == -1) {
-                                                        Random.nextInt(1, state.numberMax)
-                                                    } else {
-                                                        tableNumber
-                                                    }
+                                                    var newNumber1: Int? = null
+                                                    var newNumber2: Int? = null
+                                                    do {
+                                                        newNumber1 = Random.nextInt(1, numberMax)
+                                                        newNumber2 = if (tableNumber == -1) {
+                                                            Random.nextInt(1, numberMax)
+                                                        } else {
+                                                            tableNumber
+                                                        }
+                                                    } while (newNumber1 == number1 && newNumber2 == number2)
+                                                    number1 = newNumber1
+                                                    number2 = newNumber2
                                                     result = number1!! * number2!!
                                                     errorText = ""
                                                     resultInput = null
@@ -401,7 +435,7 @@ class App : RComponent<AppProps, AppState>() {
                         }
                     }
 //                }
-//            }
+            }
         }
 
 

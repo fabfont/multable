@@ -201,7 +201,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 attrs.variant = "h6"
                                                 attrs.component = "p"
                                                 attrs.align = "right"
-                                                +"Table : "
+                                                +"Table :"
                                             }
                                         }
 
@@ -231,7 +231,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 }
                                                 MenuItem {
                                                     attrs.value = -1
-                                                    +"Toute les tables"
+                                                    +"Toutes les tables"
                                                 }
                                             }
                                         }
@@ -257,7 +257,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 attrs.variant = "h6"
                                                 attrs.component = "p"
                                                 attrs.align = "right"
-                                                +"Nombre de questions : "
+                                                +"Nombre de questions :"
                                             }
                                         }
 

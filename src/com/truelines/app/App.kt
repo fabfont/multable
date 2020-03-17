@@ -137,18 +137,20 @@ class App : RComponent<AppProps, AppState>() {
                     val checkResult = fun(e: Event) {
                         e.stopPropagation()
 
-                        if (state.result == state.resultInput) {
-                            setState {
-                                remainingQuestions--
-                                if (!gaveBadAnswer) goodAnswer++
-                                gaveBadAnswer = false
-                            }
-                            renew()
-                        } else {
-                            setState {
-                                errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
-                                resultInput = null
-                                gaveBadAnswer = true
+                        state.resultInput?.let {
+                            if (state.result == state.resultInput) {
+                                setState {
+                                    remainingQuestions--
+                                    if (!gaveBadAnswer) goodAnswer++
+                                    gaveBadAnswer = false
+                                }
+                                renew()
+                            } else {
+                                setState {
+                                    errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
+                                    resultInput = null
+                                    gaveBadAnswer = true
+                                }
                             }
                         }
 
@@ -436,7 +438,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 Button {
                                                     attrs.color = "primary"
                                                     attrs.variant = "outlined"
-                                                    attrs.disabled = state.checkDisabled
+                                                    attrs.disabled = state.checkDisabled || (state.resultInput == null)
                                                     attrs.onClick = checkResult
                                                     +"Vérifier"
                                                 }

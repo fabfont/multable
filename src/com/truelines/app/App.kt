@@ -68,26 +68,6 @@ class App : RComponent<AppProps, AppState>() {
         checkDisabled = false
     }
 
-    fun renew() {
-        setState {
-            var newNumber1: Int? = null
-            var newNumber2: Int? = null
-            do {
-                newNumber1 = Random.nextInt(1, numberMax)
-                newNumber2 = if (tableNumber == -1) {
-                    Random.nextInt(1, numberMax)
-                } else {
-                    tableNumber
-                }
-            } while (newNumber1 == number1 && newNumber2 == number2)
-            number1 = newNumber1
-            number2 = newNumber2
-            result = number1!! * number2!!
-            errorText = ""
-            resultInput = null
-        }
-    }
-
     override fun RBuilder.render() {
 
         mCssBaseline()
@@ -118,330 +98,291 @@ class App : RComponent<AppProps, AppState>() {
             Grid {
                 attrs.container = true
                 attrs.direction = "row"
-//                attrs.alignItems = "stretch"
                 attrs.justify = "center"
-//                attrs.alignItems = "stretch"
                 attrs.spacing = 2
-                attrs.style = kotlinext.js.js {
+                attrs.style = js {
                     width = "100%"
                     margin = "40px auto auto auto"
                     height = "100%"
                     flexWrap = "nowrap"
                 }
 
-//                switch {
+                Grid {
+                    attrs.item = true
+                    attrs.xs = 11
+                    attrs.md = 6
+                    attrs.lg = 4
 
-//                    route(path = ROOT_PATH, exact = true) {
-
-
-                    val checkResult = fun(e: Event) {
-                        e.stopPropagation()
-
-                        state.resultInput?.let {
-                            if (state.result == state.resultInput) {
-                                setState {
-                                    remainingQuestions--
-                                    if (!gaveBadAnswer) goodAnswer++
-                                    gaveBadAnswer = false
-                                }
-                                renew()
-                            } else {
-                                setState {
-                                    errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
-                                    resultInput = null
-                                    gaveBadAnswer = true
-                                }
-                            }
+                    Card {
+                        attrs.style = js {
+                            width = "100%"
+                            padding = "20px"
                         }
 
-                    }
+                        Grid {
+                            attrs.container = true
+                            attrs.direction = "column"
+                            attrs.justify = "flex-start"
+                            attrs.alignItems = "stretch"
+                            attrs.spacing = 2
 
-                    Grid {
-                        attrs.item = true
-                        attrs.xs = 11
-                        attrs.md = 6
-                        attrs.lg = 4
+                            Grid {
+                                attrs.item = true
 
-                        Card {
-                            attrs.style = js {
-                                width = "100%"
-                                padding = "20px"
+                                attrs.style = js {
+                                    marginBottom = "40px"
+                                }
+
+                                logo(logoHeight = 70) {}
+                            }
+
+
+                            Grid {
+                                attrs.item = true
+
+                                Grid {
+                                    attrs.container = true
+                                    attrs.direction = "row"
+                                    attrs.justify = "center"
+                                    attrs.spacing = 3
+
+                                    Grid {
+                                        attrs.item = true
+                                        attrs.xs = 6
+
+                                        Typography {
+                                            attrs.variant = "h6"
+                                            attrs.component = "p"
+                                            attrs.align = "right"
+                                            +"Table :"
+                                        }
+                                    }
+
+                                    Grid {
+                                        attrs.item = true
+                                        attrs.xs = 6
+                                        attrs.style = js {
+                                            textAlign = "left"
+                                        }
+
+                                        Select {
+                                            attrs.defaultValue = state.tableNumber
+                                            attrs.autoWidth = true
+                                            attrs.disabled = state.started
+                                            attrs.onChange = {
+                                                it.preventDefault()
+                                                setState {
+                                                    tableNumber = it.target.asDynamic().value
+                                                }
+                                            }
+
+                                            for (i in 1..10) {
+                                                MenuItem {
+                                                    attrs.value = i
+                                                    +"Table de $i"
+                                                }
+                                            }
+                                            MenuItem {
+                                                attrs.value = -1
+                                                +"Toutes les tables"
+                                            }
+                                        }
+                                    }
+
+                                }
                             }
 
                             Grid {
-                                attrs.container = true
-                                attrs.direction = "column"
-                                attrs.justify = "flex-start"
-                                attrs.alignItems = "stretch"
-                                attrs.spacing = 2
+                                attrs.item = true
 
                                 Grid {
-                                    attrs.item = true
-
-                                    attrs.style = js {
-                                        marginBottom = "40px"
-                                    }
-
-                                    logo(logoHeight = 70) {}
-                                }
+                                    attrs.container = true
+                                    attrs.direction = "row"
+                                    attrs.justify = "center"
+                                    attrs.spacing = 3
 
 
-                                Grid {
-                                    attrs.item = true
-
-                                    Grid {
-                                        attrs.container = true
-                                        attrs.direction = "row"
-                                        attrs.justify = "center"
-                                        attrs.spacing = 3
-
-                                        Grid {
-                                            attrs.item = true
-                                            attrs.xs = 6
-
-                                            Typography {
-                                                attrs.variant = "h6"
-                                                attrs.component = "p"
-                                                attrs.align = "right"
-                                                +"Table :"
-                                            }
-                                        }
-
-                                        Grid {
-                                            attrs.item = true
-                                            attrs.xs = 6
-                                            attrs.style = js {
-                                                textAlign = "left"
-                                            }
-
-                                            Select {
-                                                attrs.defaultValue = state.tableNumber
-                                                attrs.autoWidth = true
-                                                attrs.disabled = state.started
-                                                attrs.onChange = {
-                                                    it.preventDefault()
-                                                    setState {
-                                                        tableNumber = it.target.asDynamic().value
-                                                    }
-                                                }
-
-                                                for (i in 1..10) {
-                                                    MenuItem {
-                                                        attrs.value = i
-                                                        +"Table de $i"
-                                                    }
-                                                }
-                                                MenuItem {
-                                                    attrs.value = -1
-                                                    +"Toutes les tables"
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-
-                                Grid {
-                                    attrs.item = true
-
-                                    Grid {
-                                        attrs.container = true
-                                        attrs.direction = "row"
-                                        attrs.justify = "center"
-                                        attrs.spacing = 3
-
-
-                                        Grid {
-                                            attrs.item = true
-                                            attrs.xs = 6
-
-                                            Typography {
-                                                attrs.variant = "h6"
-                                                attrs.component = "p"
-                                                attrs.align = "right"
-                                                +"Nombre de questions :"
-                                            }
-                                        }
-
-                                        Grid {
-                                            attrs.item = true
-                                            attrs.xs = 6
-                                            attrs.style = js {
-                                                textAlign = "left"
-                                            }
-
-                                            Select {
-                                                attrs.defaultValue = state.numberOfQuestions
-                                                attrs.autoWidth = true
-                                                attrs.disabled = state.started
-                                                attrs.onChange = {
-                                                    setState {
-                                                        numberOfQuestions = it.target.asDynamic().value
-                                                    }
-                                                }
-
-                                                MenuItem {
-                                                    val value = 10
-                                                    attrs.value = value
-                                                    +"$value"
-                                                }
-                                                MenuItem {
-                                                    val value = 20
-                                                    attrs.value = value
-                                                    +"$value"
-                                                }
-                                                MenuItem {
-                                                    val value = 30
-                                                    attrs.value = value
-                                                    +"$value"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Grid {
-                                    attrs.item = true
-
-                                    attrs.style = js {
-                                        marginTop = "30px"
-                                    }
-
-                                    Button {
-                                        attrs.color = "primary"
-                                        attrs.variant = "outlined"
-                                        attrs.onClick = {
-                                            if (!state.started) {
-                                                setState {
-                                                    var newNumber1: Int? = null
-                                                    var newNumber2: Int? = null
-                                                    do {
-                                                        newNumber1 = Random.nextInt(1, numberMax)
-                                                        newNumber2 = if (tableNumber == -1) {
-                                                            Random.nextInt(1, numberMax)
-                                                        } else {
-                                                            tableNumber
-                                                        }
-                                                    } while (newNumber1 == number1 && newNumber2 == number2)
-                                                    number1 = newNumber1
-                                                    number2 = newNumber2
-                                                    result = number1!! * number2!!
-                                                    errorText = ""
-                                                    resultInput = null
-                                                    startButtonLabel = "Recommencer"
-                                                    started = true
-                                                    goodAnswer = 0
-                                                    gaveBadAnswer = false
-                                                    remainingQuestions = numberOfQuestions
-                                                }
-                                            } else {
-                                                setState {
-                                                    startButtonLabel = "Démarrer"
-                                                    started = false
-                                                }
-                                            }
-                                        }
-                                        +state.startButtonLabel
-                                    }
-
-                                }
-
-                                Grid {
-                                    attrs.item = true
-
-                                    Typography {
-                                        attrs.variant = "h2"
-                                        attrs.component = "p"
-                                        attrs.style = js {
-                                            marginTop = "50px"
-                                        }
-                                        if (state.remainingQuestions > 0) {
-                                            if (state.started) {
-                                                +"${state.number1} x ${state.number2} = ?"
-                                            } else {
-                                                +"Prêt ?"
-                                            }
-                                        } else {
-                                            +"Ton score : ${state.goodAnswer} / ${state.numberOfQuestions}"
-                                        }
-                                    }
-                                }
-
-                                if (state.started && state.remainingQuestions > 0) {
                                     Grid {
                                         attrs.item = true
+                                        attrs.xs = 6
+
+                                        Typography {
+                                            attrs.variant = "h6"
+                                            attrs.component = "p"
+                                            attrs.align = "right"
+                                            +"Nombre de questions :"
+                                        }
+                                    }
+
+                                    Grid {
+                                        attrs.item = true
+                                        attrs.xs = 6
                                         attrs.style = js {
-                                            marginTop = "40px"
+                                            textAlign = "left"
                                         }
 
+                                        Select {
+                                            attrs.defaultValue = state.numberOfQuestions
+                                            attrs.autoWidth = true
+                                            attrs.disabled = state.started
+                                            attrs.onChange = {
+                                                setState {
+                                                    numberOfQuestions = it.target.asDynamic().value
+                                                }
+                                            }
+
+                                            MenuItem {
+                                                val value = 10
+                                                attrs.value = value
+                                                +"$value"
+                                            }
+                                            MenuItem {
+                                                val value = 20
+                                                attrs.value = value
+                                                +"$value"
+                                            }
+                                            MenuItem {
+                                                val value = 30
+                                                attrs.value = value
+                                                +"$value"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            Grid {
+                                attrs.item = true
+
+                                attrs.style = js {
+                                    marginTop = "30px"
+                                }
+
+                                Button {
+                                    attrs.color = "primary"
+                                    attrs.variant = "outlined"
+                                    attrs.onClick = {
+                                        if (!state.started) {
+                                            setState {
+                                                val newNumbers = getNewNumbers()
+                                                number1 = newNumbers.first
+                                                number2 = newNumbers.second
+                                                result = number1!! * number2!!
+                                                errorText = ""
+                                                resultInput = null
+                                                startButtonLabel = "Recommencer"
+                                                started = true
+                                                goodAnswer = 0
+                                                gaveBadAnswer = false
+                                                remainingQuestions = numberOfQuestions
+                                            }
+                                        } else {
+                                            setState {
+                                                startButtonLabel = "Démarrer"
+                                                started = false
+                                            }
+                                        }
+                                    }
+                                    +state.startButtonLabel
+                                }
+
+                            }
+
+                            Grid {
+                                attrs.item = true
+
+                                Typography {
+                                    attrs.variant = "h2"
+                                    attrs.component = "p"
+                                    attrs.style = js {
+                                        marginTop = "50px"
+                                    }
+                                    if (state.remainingQuestions > 0) {
+                                        if (state.started) {
+                                            +"${state.number1} x ${state.number2} = ?"
+                                        } else {
+                                            +"Prêt ?"
+                                        }
+                                    } else {
+                                        +"Ton score : ${state.goodAnswer} / ${state.numberOfQuestions}"
+                                    }
+                                }
+                            }
+
+                            if (state.started && state.remainingQuestions > 0) {
+                                Grid {
+                                    attrs.item = true
+                                    attrs.style = js {
+                                        marginTop = "40px"
+                                    }
+
+                                    Grid {
+                                        attrs.container = true
+                                        attrs.direction = "row"
+                                        attrs.justify = "center"
+                                        attrs.spacing = 3
+
                                         Grid {
-                                            attrs.container = true
-                                            attrs.direction = "row"
-                                            attrs.justify = "center"
-                                            attrs.spacing = 3
+                                            attrs.item = true
+                                            TextField {
+                                                attrs.required = true
+                                                attrs.autoFocus = true
+                                                attrs.id = "result-input"
+                                                attrs.label = "Réponse"
+                                                attrs.placeholder = "Réponse"
+                                                attrs.error = !state.errorText.isEmpty()
+                                                attrs.helperText = state.errorText
+                                                attrs.type = "number"
+                                                attrs.value = state.resultInput ?: ""
 
-                                            Grid {
-                                                attrs.item = true
-                                                TextField {
-                                                    attrs.required = true
-                                                    attrs.autoFocus = true
-                                                    attrs.id = "result-input"
-                                                    attrs.label = "Réponse"
-                                                    attrs.placeholder = "Réponse"
-                                                    attrs.error = !state.errorText.isEmpty()
-                                                    attrs.helperText = state.errorText
-                                                    attrs.type = "number"
-                                                    attrs.value = state.resultInput ?: ""
+                                                attrs.style = js {
+                                                    width = "300px"
+                                                }
 
-                                                    attrs.style = js {
-                                                        width = "300px"
-                                                    }
-
-                                                    attrs.InputProps = kotlinext.js.js {
-                                                        onKeyDown = fun(e: Event) {
-                                                            when (e.asDynamic().key) {
-                                                                "Enter" -> {
-                                                                    console.info("Enter key down")
-                                                                    e.preventDefault()
-                                                                    checkResult(e)
-                                                                }
+                                                attrs.InputProps = kotlinext.js.js {
+                                                    onKeyDown = fun(e: Event) {
+                                                        when (e.asDynamic().key) {
+                                                            "Enter" -> {
+                                                                console.info("Enter key down")
+                                                                e.preventDefault()
+                                                                checkResult(e)
                                                             }
                                                         }
                                                     }
-                                                    attrs.onChange = {
-                                                        val valueInput =
-                                                                (document.getElementById("result-input")
-                                                                        as HTMLInputElement).value
+                                                }
+                                                attrs.onChange = {
+                                                    val valueInput =
+                                                            (document.getElementById("result-input")
+                                                                    as HTMLInputElement).value
 
-                                                        if (valueInput.length > 3) {
-                                                            setState {
-                                                                errorText = "Le résultat ne peut pas avoir plus de 3 " +
-                                                                        "chiffres"
-                                                                checkDisabled = true
-                                                            }
-                                                        } else {
-                                                            setState {
-                                                                errorText = ""
-                                                                checkDisabled = false
-                                                                resultInput = if (valueInput.isEmpty()) {
-                                                                    null
-                                                                } else {
-                                                                    valueInput.toInt()
-                                                                }
+                                                    if (valueInput.length > 3) {
+                                                        setState {
+                                                            errorText = "Le résultat ne peut pas avoir plus de 3 " +
+                                                                    "chiffres"
+                                                            checkDisabled = true
+                                                        }
+                                                    } else {
+                                                        setState {
+                                                            errorText = ""
+                                                            checkDisabled = false
+                                                            resultInput = if (valueInput.isEmpty()) {
+                                                                null
+                                                            } else {
+                                                                valueInput.toInt()
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                            Grid {
-                                                attrs.item = true
-                                                Button {
-                                                    attrs.color = "primary"
-                                                    attrs.variant = "outlined"
-                                                    attrs.disabled = state.checkDisabled || (state.resultInput == null)
-                                                    attrs.onClick = checkResult
-                                                    +"Vérifier"
-                                                }
+                                        }
+                                        Grid {
+                                            attrs.item = true
+                                            Button {
+                                                attrs.color = "primary"
+                                                attrs.variant = "outlined"
+                                                attrs.disabled = state.checkDisabled || (state.resultInput == null)
+                                                attrs.onClick = this@App.checkResult
+                                                +"Vérifier"
                                             }
                                         }
                                     }
@@ -449,11 +390,49 @@ class App : RComponent<AppProps, AppState>() {
                             }
                         }
                     }
-//                }
+                }
             }
         }
+    }
 
+    val checkResult = fun(e: Event) {
+        e.stopPropagation()
 
+        state.resultInput?.let {
+            if (state.result == state.resultInput) {
+                val newNumbers = getNewNumbers()
+                setState {
+                    remainingQuestions--
+                    if (!gaveBadAnswer) goodAnswer++
+                    gaveBadAnswer = false
+                    number1 = newNumbers.first
+                    number2 = newNumbers.second
+                    result = number1!! * number2!!
+                    errorText = ""
+                    resultInput = null
+                }
+            } else {
+                setState {
+                    errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
+                    resultInput = null
+                    gaveBadAnswer = true
+                }
+            }
+        }
+    }
+
+    val getNewNumbers = fun(): Pair<Int, Int> {
+        var newNumber1: Int? = null
+        var newNumber2: Int? = null
+        do {
+            newNumber1 = Random.nextInt(1, state.numberMax)
+            newNumber2 = if (state.tableNumber == -1) {
+                Random.nextInt(1, state.numberMax)
+            } else {
+                state.tableNumber
+            }
+        } while (newNumber1 == state.number1 && newNumber2 == state.number2)
+        return Pair(newNumber1!!, newNumber2!!)
     }
 
     companion object {

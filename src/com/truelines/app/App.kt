@@ -42,6 +42,7 @@ interface AppState : RState {
     var gaveBadAnswer: Boolean
     var tableNumber: Int
     var checkDisabled: Boolean
+    var operation: Operation
 }
 
 interface AppProps: CommonProps
@@ -66,6 +67,7 @@ class App : RComponent<AppProps, AppState>() {
         gaveBadAnswer = false
         tableNumber = -1
         checkDisabled = false
+        operation = Operation.MULTIPLICATION
     }
 
     override fun RBuilder.render() {
@@ -136,6 +138,65 @@ class App : RComponent<AppProps, AppState>() {
                                 logo(logoHeight = 70) {}
                             }
 
+                            Grid {
+                                attrs.item = true
+                                attrs.style = js {
+                                    // Don't know why I need to set the height only for this container
+                                    // and not for the other. Otherwise, when selecting "Addition", the height is
+                                    // much more higher than for "Multiplication"
+                                    height = "45px"
+                                }
+
+                                Grid {
+                                    attrs.container = true
+                                    attrs.direction = "row"
+                                    attrs.justify = "center"
+                                    attrs.spacing = 3
+
+                                    Grid {
+                                        attrs.item = true
+                                        attrs.xs = 6
+
+                                        Typography {
+                                            attrs.variant = "h6"
+                                            attrs.component = "p"
+                                            attrs.align = "right"
+                                            +"Opération :"
+                                        }
+                                    }
+
+                                    Grid {
+                                        attrs.item = true
+                                        attrs.xs = 6
+                                        attrs.style = js {
+                                            textAlign = "left"
+                                        }
+
+                                        Select {
+                                            attrs.defaultValue = state.operation
+                                            attrs.autoWidth = true
+                                            attrs.disabled = state.started
+                                            attrs.onChange = {
+                                                it.preventDefault()
+                                                setState {
+                                                    operation = it.target.asDynamic().value
+                                                }
+                                            }
+
+                                            MenuItem {
+                                                attrs.value = Operation.MULTIPLICATION
+                                                +"Multiplication"
+                                            }
+
+                                            MenuItem {
+                                                attrs.value = Operation.ADDITION
+                                                +"Addition"
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
 
                             Grid {
                                 attrs.item = true
@@ -267,7 +328,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 val newNumbers = getNewNumbers()
                                                 number1 = newNumbers.first
                                                 number2 = newNumbers.second
-                                                result = number1!! * number2!!
+                                                result = state.operation.function(number1!!,number2!!)
                                                 errorText = ""
                                                 resultInput = null
                                                 startButtonLabel = "Recommencer"
@@ -299,7 +360,7 @@ class App : RComponent<AppProps, AppState>() {
                                     }
                                     if (state.remainingQuestions > 0) {
                                         if (state.started) {
-                                            +"${state.number1} x ${state.number2} = ?"
+                                            +"${state.number1} ${state.operation.symbol} ${state.number2} = ?"
                                         } else {
                                             +"Prêt ?"
                                         }
@@ -407,7 +468,7 @@ class App : RComponent<AppProps, AppState>() {
                     gaveBadAnswer = false
                     number1 = newNumbers.first
                     number2 = newNumbers.second
-                    result = number1!! * number2!!
+                    result = operation.function(number1!!, number2!!)
                     errorText = ""
                     resultInput = null
                 }
@@ -435,12 +496,21 @@ class App : RComponent<AppProps, AppState>() {
         return Pair(newNumber1!!, newNumber2!!)
     }
 
+
     companion object {
         const val ROOT_PATH = "/"
         const val LOGIN_PATH = "${ROOT_PATH}login"
     }
 }
 
+enum class Operation(var function: (Int, Int) -> Int, var symbol: String) {
+    MULTIPLICATION(multiplication, "x"),
+    ADDITION(addition,"+")
+}
+
+val multiplication = fun(a: Int, b: Int): Int = a * b
+
+val addition = fun(a: Int, b: Int): Int = a + b
 
 fun RBuilder.app(handler: AppProps.() -> Unit): ReactElement {
     return child(App::class) {

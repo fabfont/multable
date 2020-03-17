@@ -1,11 +1,3 @@
-/*
- *  Copyright (c) 2019 Leonard Management. All rights reserved.
- *
- *  This is an unpublished work of Leonard Management.
- *  It may not be used, copied, disclosed or transferred other than
- *  in accordance with the written permission of Leonard Management.
- */
-
 @file:JsModule("@material-ui/core/Popover")
 @file:JsNonModule
 package com.truelines.material

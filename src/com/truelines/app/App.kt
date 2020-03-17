@@ -10,7 +10,6 @@ import com.truelines.material.MenuItem
 import com.truelines.material.Select
 import com.truelines.material.TextField
 import com.truelines.material.Typography
-import com.truelines.utils.Router
 import kotlinext.js.js
 import material.Colors
 import material.ThemeOptions
@@ -23,7 +22,6 @@ import react.RBuilder
 import react.RComponent
 import react.RState
 import react.ReactElement
-import react.router.dom.switch
 import react.setState
 import kotlin.browser.document
 import kotlin.random.Random
@@ -43,6 +41,7 @@ interface AppState : RState {
     var goodAnswer: Int
     var gaveBadAnswer: Boolean
     var tableNumber: Int
+    var checkDisabled: Boolean
 }
 
 interface AppProps: CommonProps
@@ -66,6 +65,7 @@ class App : RComponent<AppProps, AppState>() {
         goodAnswer = 0
         gaveBadAnswer = false
         tableNumber = -1
+        checkDisabled = false
     }
 
     fun renew() {
@@ -411,11 +411,21 @@ class App : RComponent<AppProps, AppState>() {
                                                                 (document.getElementById("result-input")
                                                                         as HTMLInputElement).value
 
-                                                        setState {
-                                                            resultInput = if (valueInput.isEmpty()) {
-                                                                null
-                                                            } else {
-                                                                valueInput.toInt()
+                                                        if (valueInput.length > 3) {
+                                                            setState {
+                                                                errorText = "Le résultat ne peut pas avoir plus de 3 " +
+                                                                        "chiffres"
+                                                                checkDisabled = true
+                                                            }
+                                                        } else {
+                                                            setState {
+                                                                errorText = ""
+                                                                checkDisabled = false
+                                                                resultInput = if (valueInput.isEmpty()) {
+                                                                    null
+                                                                } else {
+                                                                    valueInput.toInt()
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -426,6 +436,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 Button {
                                                     attrs.color = "primary"
                                                     attrs.variant = "outlined"
+                                                    attrs.disabled = state.checkDisabled
                                                     attrs.onClick = checkResult
                                                     +"Vérifier"
                                                 }

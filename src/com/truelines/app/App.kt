@@ -35,7 +35,7 @@ interface AppState : RState {
     var number1: Int?
     var number2: Int?
     var result: Int?
-    var resultInput: Int?
+    var resultInput: String
     var numberOfQuestions: Int
     var remainingQuestions : Int
     var goodAnswer: Int
@@ -60,7 +60,7 @@ class App : RComponent<AppProps, AppState>() {
         number1 = null
         number2 = null
         result = null
-        resultInput = null
+        resultInput = ""
         numberOfQuestions = 10
         remainingQuestions = 10
         goodAnswer = 0
@@ -330,7 +330,7 @@ class App : RComponent<AppProps, AppState>() {
                                                 number2 = newNumbers.second
                                                 result = state.operation.function(number1!!,number2!!)
                                                 errorText = ""
-                                                resultInput = null
+                                                resultInput = ""
                                                 startButtonLabel = "Recommencer"
                                                 started = true
                                                 goodAnswer = 0
@@ -381,6 +381,7 @@ class App : RComponent<AppProps, AppState>() {
                                         attrs.container = true
                                         attrs.direction = "row"
                                         attrs.justify = "center"
+                                        attrs.alignItems = "center"
                                         attrs.spacing = 3
 
                                         Grid {
@@ -393,8 +394,8 @@ class App : RComponent<AppProps, AppState>() {
                                                 attrs.placeholder = "Réponse"
                                                 attrs.error = !state.errorText.isEmpty()
                                                 attrs.helperText = state.errorText
-                                                attrs.type = "number"
-                                                attrs.value = state.resultInput ?: ""
+//                                                attrs.type = "number"
+                                                attrs.value = state.resultInput
 
                                                 attrs.style = js {
                                                     width = "300px"
@@ -416,8 +417,16 @@ class App : RComponent<AppProps, AppState>() {
                                                             (document.getElementById("result-input")
                                                                     as HTMLInputElement).value
 
-                                                    if (valueInput.length > 3) {
+                                                    val regex = Regex(state.operation.validityPattern)
+                                                    if (!regex.matches(valueInput)) {
                                                         setState {
+                                                            resultInput = valueInput
+                                                            errorText = state.operation.validityError
+                                                            checkDisabled = true
+                                                        }
+                                                    } else if (valueInput.length > 3) {
+                                                        setState {
+                                                            resultInput = valueInput
                                                             errorText = "Le résultat ne peut pas avoir plus de 3 " +
                                                                     "chiffres"
                                                             checkDisabled = true
@@ -426,11 +435,7 @@ class App : RComponent<AppProps, AppState>() {
                                                         setState {
                                                             errorText = ""
                                                             checkDisabled = false
-                                                            resultInput = if (valueInput.isEmpty()) {
-                                                                null
-                                                            } else {
-                                                                valueInput.toInt()
-                                                            }
+                                                            resultInput = valueInput
                                                         }
                                                     }
                                                 }
@@ -441,7 +446,7 @@ class App : RComponent<AppProps, AppState>() {
                                             Button {
                                                 attrs.color = "primary"
                                                 attrs.variant = "outlined"
-                                                attrs.disabled = state.checkDisabled || (state.resultInput == null)
+                                                attrs.disabled = state.checkDisabled || state.resultInput.isEmpty()
                                                 attrs.onClick = this@App.checkResult
                                                 +"Vérifier"
                                             }
@@ -459,8 +464,9 @@ class App : RComponent<AppProps, AppState>() {
     val checkResult = fun(e: Event) {
         e.stopPropagation()
 
-        state.resultInput?.let {
-            if (state.result == state.resultInput) {
+        if (!state.checkDisabled && state.resultInput.isNotEmpty()) {
+            // At that step, resultInput is an integer
+            if (state.result == state.resultInput.toInt()) {
                 val newNumbers = getNewNumbers()
                 setState {
                     remainingQuestions--
@@ -470,21 +476,22 @@ class App : RComponent<AppProps, AppState>() {
                     number2 = newNumbers.second
                     result = operation.function(number1!!, number2!!)
                     errorText = ""
-                    resultInput = null
+                    resultInput = ""
                 }
             } else {
                 setState {
-                    errorText = "${resultInput} n'est pas la bonne réponse. Essaie à nouveau."
-                    resultInput = null
+                    errorText = "$resultInput n'est pas la bonne réponse. Essaie à nouveau."
+                    resultInput = ""
                     gaveBadAnswer = true
                 }
             }
         }
+
     }
 
     val getNewNumbers = fun(): Pair<Int, Int> {
-        var newNumber1: Int? = null
-        var newNumber2: Int? = null
+        var newNumber1: Int?
+        var newNumber2: Int?
         do {
             newNumber1 = Random.nextInt(1, state.numberMax)
             newNumber2 = if (state.tableNumber == -1) {
@@ -503,9 +510,13 @@ class App : RComponent<AppProps, AppState>() {
     }
 }
 
-enum class Operation(var function: (Int, Int) -> Int, var symbol: String) {
-    MULTIPLICATION(multiplication, "x"),
-    ADDITION(addition,"+")
+enum class Operation(
+        var function: (Int, Int) -> Int,
+        var symbol: String,
+        var validityPattern: String,
+        var validityError: String) {
+    MULTIPLICATION(multiplication, "x", "[0-9]*", "Le résult doit être un nombre entier"),
+    ADDITION(addition,"+", "[0-9]*", "Le résult doit être un nombre entier")
 }
 
 val multiplication = fun(a: Int, b: Int): Int = a * b
